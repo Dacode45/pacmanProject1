@@ -85,37 +85,46 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
     isVisited = {}
-    currentState = problem.getStartState()
-    if problem.isGoalState(currentState[0]):
-        return []
-    path = []
-    for successor in problem.getSuccessors(currentState):
-        if successor[0] == currentState[0]:
-            continue
-        success, directions = dfsRecursive(problem, successor)
-        if success:
-            path += directions
-    return path
+    path = {}
 
-isVisited = {}
-def dfsRecursive(problem, node) :
-    isVisited[node[0]] = True
-    path = [node[1]]
-    if node[0] == None:
-        return (False, path)
-    if problem.isGoalState(node[0]):
-        return (True, path)
-    if len(problem.getSuccessors(node[0])) == 0:
-        return (False, path)
+    startState = problem.getStartState()
+    if problem.isGoalState(startState):
+        return makePath(path, startState, startState)
+    stateStack = util.Stack()
+    stateStack.push((startState, None, 1, startState))
+    while not stateStack.isEmpty():
+        currentState, action, cost, previousState = stateStack.pop()
+        path[currentState] = (previousState, action, cost)
+        if problem.isGoalState(currentState):
+            return makePath(path, startState, currentState)
+        isVisited[currentState] = True
 
-    for successor in problem.getSuccessors(node[0]):
-        if successor[0] in isVisited:
-            continue
-        success, directions = dfsRecursive(problem, successor)
-        if success:
-            return (success, path + directions)
+        for (s, a, c) in problem.getSuccessors(currentState):
+            if isVisited.has_key(s):
+                continue
+            stateStack.push((s, a, c, currentState))
 
-    return False, path
+
+def makePath(path, startState, goalState):
+    """
+    makePath takes a dictionary in the form of an adjacency list in which
+    the value associated with the key is the state, action, and cost to get
+    to that key.
+    """
+    toReturn = []
+    if startState == goalState:
+        return toReturn
+
+    currentState = goalState
+    while True:
+        previousState, action, cost = path[currentState]
+        toReturn.append(action)
+        if previousState == startState:
+            toReturn.reverse()
+            return toReturn
+        currentState = previousState
+
+
 
 def breadthFirstSearch(problem):
     """
