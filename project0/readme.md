@@ -31,4 +31,4 @@ The following are true:
 shopSmart.shopSmart(orders1, shops).getName() == 'shop1'
 
 shopSmart.shopSmart(orders2, shops).getName() == 'shop2'
-'''
+```
